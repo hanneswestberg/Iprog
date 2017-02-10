@@ -1,38 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dinner planner</title>
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Dinner Planner</title>
 
-  </head>
-  <body>
-	<div class="container">
-		<h1>Dinner planner</h1>
-		<div id="exampleView">
-			<div>
-				Number of guests: <span id="numberOfGuests"></span>
-			</div>
-			<div>
-          <button id="minusGuest" class="btn"><span class="glyphicon glyphicon-minus"></span></button>
-				<button id="plusGuest" class="btn"><span class="glyphicon glyphicon-plus"></span></button>
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/stylesheet.css">
+</head>
+
+<body>
+	<div class="container-fluid">
+
+		<div id="header" class="header">
+			<div class="row">
+				<div id ="mainHeader" class="col-sm-3">
+					<h1>HOMELETTE</h1>
+				</div>
+				<div id="subHeader" class="col-sm-9">
+					<h4 style="padding:40px"><i>From the best chef's in the world directly into your kitchen</i></h4>
+				</div>
 			</div>
 		</div>
-	</div>
 
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery.js"></script>
-    <!-- Bootstrap JavaScript, needed if you want for instance tabs, models, popovers etc. -->
-    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+		<!-- VIEW 1 -->
+		<div id="view1" class="row">
+			<div class="top-buffer"></div>
+			<div class="col-sm-6">
+				<div class="box">
+					<h3>A Home Dinner Service</h3>
+					<hr>
+					<p>Important info should be displayed here!</p>
+					<div class="top-buffer"></div>
+					<p>Start quickly</p>
+					<button id="createDinner" class="btn"> <span>Create new dinner</span></button>
+				</div>
+			</div>
+		</div>
 
-	<!-- The application JavaScript code -->
-	<script src="js/app.js"></script>
-	<script src="js/model/dinnerModel.js"></script>
-	<script src="js/view/exampleView.js"></script>
-	<script src="js/view/exampleViewController.js"></script>
-  </body>
+		<!-- COMBINED VIEWS -->
+		<div id="combinedViews" class="row" style="height:100%; display:none">
+
+			<!-- VIEW 2 -->
+			<div id="view2" class="col-sm-3 col-xs-5" style="display:none; height:100%">
+				<h4 id="myDinner">My dinner</h4>
+				<div class="row">
+					<div class="col-sm-6 col-xs-6">
+						<p>People :<span id="numberOfGuests"></span></p>
+					</div>
+					<div class="col-sm-6 col-xs-6">
+						<button id="minusGuest" class="btn" style="box-shadow: none"><span class="glyphicon glyphicon-minus"></span></button>
+						<button id="plusGuest" class="btn" style="box-shadow: none"><span class="glyphicon glyphicon-plus"></span></button>
+					</div>
+				</div>
+					
+				<div class="row" style="background-color:rgba(200, 200, 200, 0.6); border-style: solid; border-right: 0px; border-width: 1px; margin-top: 10px;">
+					<div class="col-sm-6 col-xs-6">
+						<p>Dish Name</p>
+					</div>
+					<div class="col-sm-6 col-xs-6">
+						<p>Cost</p>
+					</div>
+				</div>
+				
+				<div id="dinnerMenuList" class="dinnerMenuList">
+					<div class="row">
+						<div class="col-sm-6">
+							<p id="selectedMenus">Pending</p>
+						</div>
+						<div class="col-sm-6">
+							<p id="cost">0.00</p>
+						</div>
+					</div>
+				</div>
+				<hr>
+				<div class="row">
+					<p style="text-align:center; margin:20px"><b>Cost:</b> <span id="totalCost"></span></p>
+				</div>
+				<div class="row">
+					<button id="confirmDinnerButton" class="btn" type="button" style="width:100%; padding:10px"> <span>Confirm Dinner</span></button>
+				</div>
+			</div>
+
+			<!-- VIEW 3 -->
+			<div id="view3" class="col-sm-9 col-xs-7" style="display:none; height:100%">
+				<div class="row" style="background-color: #FCE69A">
+						<h3>Select Dish</h3>
+						<hr>
+					<div class="col-sm-6 col-xs-12">
+						<div class="input-group">
+							<input id="searchText" type="text" class="form-control input-lg" placeholder="Enter key words" />
+							<span class="input-group-btn">
+								<button id="searchButton" class="btn btn-lg" type="button"><span>Search</span>
+									<span><i class="glyphicon glyphicon-search"></i></span>
+								</button>
+							</span>
+						</div>
+					</div>
+					<div class="col-sm-6 col-xs-12">
+						<select id="searchDishType" class="form-control">
+							<option selected="selected" value="all">All</option>   
+							<option value="starter">Starter</option>                  
+							<option value="main dish">Main dish</option>
+							<option value="dessert">Dessert</option>
+						</select>
+					</div>
+					<div class="top-buffer" style="margin-top: 90px;"></div>
+					<hr style="margin:0px">
+				</div>
+				<div class="row">
+					<div class="top-buffer"></div>
+					<div id="resultDishes" class="resultDishes"> 
+						<!-- Generated code goes here, Dishes -->
+					</div>
+				</div>
+			</div>
+
+			<!-- VIEW 4 -->
+			<div id="view4" class="col-sm-9 col-xs-7" style="display:none; height:100%">
+				<div class="row">
+					<div class="col-sm-6">
+						<h2 id="chosenDish" class="chosenDish">
+							<!-- Generated heading for the chosen dish goes here -->
+							Generated heading of the chosen dish
+						</h2>
+						<div id="imageOfDish">
+							<!-- Generated image of the chosen dish goes here-->
+						</div>
+						<p id="descriptionOfDish">
+							<!-- Generated description of the chosen dish goes here-->
+							Generated description of the chosen dish
+						</p>
+							<button id="backToDishes" class="btn" type="button" style="padding:10px; margin:0px 0px 50px 0px; box-shadow: none;">
+							<span>back to Select Dish</span>
+							</button>
+					</div>
+						<div class="col-sm-6" >
+							<div class="recipeBox">
+							 <h4 id="amountOfPeopleForDish">
+								 <!-- Generated heading describing the amount of people required for the dish goes here-->
+								 Generated heading of the amount of people required for the dish
+							</h4>
+							<hr>
+							<div id="chosenDishIngredients" class="chosenDishIngredients">
+								<!-- Generated list of ingredients goes here-->
+								<h5>
+									Bunch of ingredients generated for the chosen dish
+								</h5>
+							</div>
+							<hr>
+								<div class="row">
+									<div class="col-sm-7 col-xs-7">
+										<button id="confirmDishButton" class="btn" type="button" style="margin:0px 0px 20px 40px;"><span>Confirm Dish</span></button>
+									</div>
+									<div class="col-sm-5 col-xs-5" style="padding: 0px 0px 0px 9%">
+										<p><b>SEK <span id="totalIngredientsCost"></span></b></p>
+									</div>
+								</div>
+							</div>
+					</div>
+				</div>
+				
+				<div class="row">
+					<div class="col-sm-6">
+						<h1 style="text-align:left">
+							Preparation
+						</h1>
+						<p id="instructionsForDish">
+							<!-- Generated instructions for the dish goes here-->
+							bunch of instructions for preparing the dish
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- VIEW 5 -->		
+		<div id="view5" class="col-sm-12 col-xs-12" style="display:none; height:100%">
+			<div class="row" style=" background-color: rgba(255, 255, 153, 1); border-style: solid">
+			<div class="col-sm-8 col-xs-8">
+				<h2 id="amountOfPeopleView5">
+					<!-- Generated heading of amount of people goes here-->
+					Generated heading of amount of people goes here
+				</h2>
+			</div>
+			<div class="col-sm-4 col-xs-4">
+				<button id="backToEditDinnerView5" class="btn pull-right" type="button" style="margin:40px; box-shadow: none;"><span>Go back and edit dinner</span></button>
+			</div>
+		</div>
+			
+			<div class="row">
+				<div id="allChosenDishes" class="col-sm-8" style="align:center">
+					<!-- Generated images and prices of the chosen dishes goes here-->
+				</div>
+				
+				<div id="totalCost" class="col-sm-4" style="border-left: solid">
+					<!-- Generated total price of the chosen dishes goes here-->
+				</div>
+			</div>
+			<hr>
+			<div class="row text-center">
+				<button id="printRecipeButton" class="btn" type="button" style="padding:10px;"><span>Print Full Recipe</span></button>
+			</div>
+		</div>
+
+		<!-- VIEW 6 -->
+		<div id="view6" class="col-sm-12 col-xs-12" style="display:none; height:100%">
+			<div class="row" style=" background-color: rgba(255, 255, 153, 1); border-style: solid">
+				<div class="col-sm-8 col-xs-8">
+					<h2 id="amountOfPeopleView6">
+						<!-- Generated heading of amount of people goes here-->
+						Generated heading of amount of people goes here
+					</h2>
+				</div>
+				<div class="col-sm-4 col-xs-4">
+					<button id="backToEditDinnerView6" class="btn pull-right" type="button" style="margin:40px; box-shadow: none;"><span>Go back and edit dinner</span></button>
+				</div>
+			</div>
+			<div id="allChosenDishesView6" class="allChosenDishesView6">
+				<!-- Generated images + name of dish + description goes here-->
+				<!-- Generated preparation instruction goes here-->
+			</div>
+		</div>
+
+		<!-- jQuery -->
+		<script src="https://code.jquery.com/jquery.js"></script>
+		<!-- Bootstrap JavaScript, needed if you want for instance tabs, models, popovers etc. -->
+		<script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+
+		<!-- The application JavaScript code -->
+		<script src="js/app.js"></script>
+		<script src="js/controller/controller.js"></script>
+		<script src="js/model/dinnerModel.js"></script>
+		<script src="js/view/view1.js"></script>
+		<script src="js/view/view2.js"></script>
+		<script src="js/view/view3.js"></script>
+		<script src="js/view/view4.js"></script>
+		<script src="js/view/view5.js"></script>
+		<script src="js/view/view6.js"></script>
+</body>
+
 </html>
