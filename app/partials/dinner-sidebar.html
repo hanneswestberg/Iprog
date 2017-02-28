@@ -1,0 +1,47 @@
+
+
+<!-- TODO in Lab 5: Display the items on the menu with cost for each -->
+<!--Total number of guest: {{getNumberOfGuests()}}-->
+
+<!-- Displaying number of guests both in input box and here is redundant. It is here only for the example
+purpose so you can see how some information from the model can be retrieved. In Lab 5 you will replace 
+this with Total price of the menu -->
+
+
+<div id="view2" class="col-sm-3 col-xs-5">
+  <div class="row">
+    <h2 id="myDinner" class="col-sm-12">My dinner:</h2>
+    <div class="row">
+      <div class="col-sm-12 col-xs-12" style="left:15px">
+        People: <input type="number" ng-model="numberOfGuests" ng-change="setNumberOfGuest(numberOfGuests)" style="width: 30%; left:15px"/>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" style="background-color:rgba(200, 200, 200, 0.6); border-style: solid; border-right: 0px; border-width: 1px; margin-top: 10px;">
+    <div class="col-sm-6 col-xs-6">
+      <p>Dish Name</p>
+    </div>
+    <div class="col-sm-6 col-xs-6">
+      <p>Cost</p>
+    </div>
+  </div>
+
+  <div id="dinnerMenuList" class="dinnerMenuList">
+    <div class="row">
+      <div class="col-sm-6">
+        <p id="selectedMenus">Pending</p>
+      </div>
+      <div class="col-sm-6">
+        <p id="cost">0.00</p>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <p style="text-align:center; margin:20px"><b>Cost:</b> <span id="totalCost"></span></p>
+  </div>
+  <div class="row">
+    <a id="confirmDinnerButton" href="#!/overview" class="btn btn-primary" style="width:100%; padding:10px">Confirm Dinner</a>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+<!-- We include the sidebar as it is shared across two screens. -->
+<ng-include src="'partials/dinner-sidebar.html'" ng-controller="DinnerCtrl"></ng-include>
+
+<!-- TODO in Lab 5: Display the dish information including image, Description, 
+Instructions, Ingredients and total cost. -->
+<div id="view4" class="col-sm-9 col-xs-7" ng-model="getDish()" style="height:100%">
+  <div class="row">
+    <div class="col-sm-6">
+      <h2 style="padding:0px">{{dish.title}}</h2>
+      <img ng-src="{{dish.image}}" style="width:50%; height:50%; margin: 0px;">
+      <p>{{dish.creditText}}</p>
+      <a href="#!/search" class="btn btn-primary" style="padding:10px; margin:0px 0px 50px 0px;">Back to Search</a>
+    </div>
+    <div class="col-sm-6" >
+      <div class="recipeBox">
+       <h3>Ingredients for {{getNumberOfGuests()}} people</h3>
+      <hr>
+      <div ng-repeat="ingredient in ingredients" ng-controller="DinnerCtrl">
+        <div class="row" style="margin-left:15px">
+          <div class="col-sm-3 col-xs-3">{{(ingredient.amount * getNumberOfGuests()).toFixed(2)}} {{ingredient.unit}}</div>
+          <div class="col-sm-3 col-xs-3">{{ingredient.name}}</div>
+          <div class="col-sm-3 col-xs-3" style="text-align: right">SEK</div>
+          <div class="col-sm-3 col-xs-3">{{(ingredient.amount * getNumberOfGuests()).toFixed(2)}}</div>
+        </div>
+      </div>
+      <hr>
+      <div class="row">
+        <div class="col-sm-7 col-xs-7">
+          <button id="confirmDishButton" class="btn" type="button" style="margin:0px 0px 20px 40px;"><span>Confirm Dish</span></button>
+        </div>
+        <div class="col-sm-5 col-xs-5" style="padding: 0px 0px 0px 9%">
+          <p><b>SEK<span id="totalIngredientsCost"></span></b></p>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <h1 style="text-align:left">Preparation</h1>
+      <p id="instructionsForDish">{{dish.instructions}}</p>
+    </div>
+  </div>
+</div>
