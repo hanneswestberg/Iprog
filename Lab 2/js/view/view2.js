@@ -16,14 +16,10 @@ var View2 = function (container, model) {
 			this.dinnerMenuList.html('<div class="row">' + '<div class="col-sm-6">' + '<p>Pending</p>' + '</div>' + '<div class="col-sm-6">' + '<p>0.00</p>' + '</div>' + '</div>');
 		}else{
 			this.dinnerMenuList.html("");
+			var fullMenu =  model.getFullMenu();
 			
-			for(var i = 0; i < model.getFullMenu().length; i++){
-				var totalIngredientsCost = 0;
-				for(var j = 0; j < model.getFullMenu()[i].ingredients.length; j++){
-					totalIngredientsCost += (model.getNumberOfGuests() * model.getFullMenu()[i].ingredients[j].price);
-				}
-				
-				this.dinnerMenuList.append('<div class="row">' + '<div class="col-sm-6">' + '<p>' + model.getFullMenu()[i].name + '</p>' + '</div>' + '<div class="col-sm-6">' + '<p>' + totalIngredientsCost + '</p>' + '</div>' + '</div>');
+			for(var i = 0; i < fullMenu.length; i++){				
+				this.dinnerMenuList.append('<div class="row">' + '<div class="col-sm-6">' + '<p>' + fullMenu[i].title + '</p>' + '</div>' + '<div class="col-sm-6">' + '<p>' + model.getDishPrice(fullMenu[i].id) + '</p>' + '</div>' + '</div>');
 			}
 			
 			this.totalCost.text(model.getTotalMenuPrice());
@@ -35,22 +31,3 @@ var View2 = function (container, model) {
 	this.update();
 	return this;
 }
-
-//View2Controller Object constructor
-var View2Controller = function(view, model, stateCtrl){
-	
-	view.plusButton.click(function(){
-		model.setNumberOfGuests(model.getNumberOfGuests() + 1);
-	});
-	
-	view.minusButton.click(function(){
-		model.setNumberOfGuests(model.getNumberOfGuests() - 1);
-	});
-	
-	view.confirmDinnerButton.click(function(){
-		stateCtrl.changeView("nextStep");
-	});
-	
-	return this;
-}
- 

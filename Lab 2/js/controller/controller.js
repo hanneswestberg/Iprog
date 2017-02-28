@@ -19,9 +19,10 @@ var Controller = function (model) {
     }
     
     // Add or reduce current step
-    if(message == "nextStep" && currentStep == 2 && model.getFullMenu().length == 0) currentStep = 2;
-    else if(message == "nextStep" && currentStep == 2 && model.getFullMenu().length > 0) currentStep = 4;
-    else if(message == "previousStep" && (currentStep == 4 || currentStep == 5)) currentStep = 2;
+    if(message == "nextStep" && currentStep == 2 && model.getFullMenu().length == 0) currentStep = 2; // We cannot confirm an empty dinner menu    
+    else if(message == "nextStep" && currentStep == 3 && model.getFullMenu().length == 0) currentStep = 3; // We cannot confirm an empty dinner menu
+    else if(message == "nextStep" && currentStep == 2 && model.getFullMenu().length > 0) currentStep = 4; // We have confirmed the menu
+    else if(message == "previousStep" && (currentStep == 4 || currentStep == 5)) currentStep = 2; // If we go back after we confirmed the menu
     else if(message == "nextStep") currentStep++;
     else if(message == "previousStep") currentStep--;
     else if(message.includes("showDish")) currentStep = 3; 

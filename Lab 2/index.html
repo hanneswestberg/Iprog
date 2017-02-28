@@ -40,7 +40,7 @@
 				</div>
 			</div>
 		</div>
-
+		
 		<!-- COMBINED VIEWS -->
 		<div id="combinedViews" class="row" style="height:100%; display:none">
 
@@ -102,10 +102,17 @@
 					</div>
 					<div class="col-sm-6 col-xs-12">
 						<select id="searchDishType" class="form-control">
-							<option selected="selected" value="all">All</option>   
-							<option value="starter">Starter</option>                  
-							<option value="main dish">Main dish</option>
+							<option selected="selected" value="main course">Main course</option>                  
+							<option value="side dish">Side dish</option>
 							<option value="dessert">Dessert</option>
+							<option value="appetizer">Appetizer</option>
+							<option value="salad">Salad</option>
+							<option value="bread">Bread</option>
+							<option value="breakfast">Breakfast</option>
+							<option value="soup">Soup</option>
+							<option value="beverage">Beverage</option>
+							<option value="sauce">Sauce</option>
+							<option value="drink">Drink</option>
 						</select>
 					</div>
 					<div class="top-buffer" style="margin-top: 90px;"></div>
@@ -180,7 +187,7 @@
 
 		<!-- VIEW 5 -->		
 		<div id="view5" class="col-sm-12 col-xs-12" style="display:none; height:100%">
-			<div class="row" style=" background-color: rgba(255, 255, 153, 1); border-style: solid">
+			<div class="row" style=" background-color: #FCE69A; border-style: solid">
 			<div class="col-sm-8 col-xs-8">
 				<h2 id="amountOfPeopleView5">
 					<!-- Generated heading of amount of people goes here-->
@@ -209,7 +216,7 @@
 
 		<!-- VIEW 6 -->
 		<div id="view6" class="col-sm-12 col-xs-12" style="display:none; height:100%">
-			<div class="row" style=" background-color: rgba(255, 255, 153, 1); border-style: solid">
+			<div class="row" style=" background-color: #FCE69A; border-style: solid">
 				<div class="col-sm-8 col-xs-8">
 					<h2 id="amountOfPeopleView6">
 						<!-- Generated heading of amount of people goes here-->
@@ -241,6 +248,12 @@
 		<script src="js/view/view4.js"></script>
 		<script src="js/view/view5.js"></script>
 		<script src="js/view/view6.js"></script>
+		<script src="js/controller/view1Controller.js"></script>
+		<script src="js/controller/view2Controller.js"></script>
+		<script src="js/controller/view3Controller.js"></script>
+		<script src="js/controller/view4Controller.js"></script>
+		<script src="js/controller/view5Controller.js"></script>
+		<script src="js/controller/view6Controller.js"></script>
 </body>
 
 </html>

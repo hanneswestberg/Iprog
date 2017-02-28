@@ -6,6 +6,10 @@ var DinnerModel = function() {
 	var numOfGuests = 0;
 	var dinnerMenu = [];
 	
+	// Stores the latest search results in a temporary array, so we easily can get info without doing additional API requests
+	var storedSearchResults = {};
+	var storedDishIngredients = {};
+	
 	// Lab 3 Observers/Observable
 	var observers = [];
 	
@@ -44,11 +48,18 @@ var DinnerModel = function() {
 
 	//Returns all ingredients for all the dishes on the menu.
 	this.getAllIngredients = function() {
-		var allIngredients = {};
+		var allIngredients = [];
 		for(var d = 0; d < dinnerMenu.length; d++){
-			var dish = this.getDish(d);
-			for(var i = 0; i < dish.ingredients.length; i++){
-				allIngredients[i] = dish.ingredients[i];
+			for(var i = 0; i < dinnerMenu[d].extendedIngredients.length; i++){
+				for(var j = 0; j < allIngredients.length; j++){
+					if(dinnerMenu[d].extendedIngredients[i].id == allIngredients[j].id)
+						allIngredients[j].amount += (dinnerMenu[d].extendedIngredients[i].amount * numOfGuests);
+					else {
+						var newIngredient = dinnerMenu[d].extendedIngredients[i];
+						newIngredient.amount = (newIngredient.amount * numOfGuests);
+						allIngredients.push(newIngredient);
+					}
+				}
 			}
 		}
 		return allIngredients;
@@ -58,19 +69,16 @@ var DinnerModel = function() {
 	this.getTotalMenuPrice = function() {
 		var totalPrice = 0;
 		for(var d = 0; d < dinnerMenu.length; d++){
-			var dish = this.getDish(dinnerMenu[d].id);
-			for(var i = 0; i < dish.ingredients.length; i++){
-				totalPrice += (dish.ingredients[i].price * numOfGuests);
-			}
+			totalPrice += this.getDishPrice(dinnerMenu[d].id);
 		}
-		return totalPrice;
+		return totalPrice.toFixed(2);
 	}
 
 	this.getDishPrice = function(id){
 		var dishPrice = 0;
-		var dish = this.getDish(id);
-		for(var i = 0; i < dish.ingredients.length; i++){
-			dishPrice += (dish.ingredients[i].price * numOfGuests);
+		var dish = storedDishIngredients[id];
+		for(var i = 0; i < dish.extendedIngredients.length; i++){
+			dishPrice += (dish.extendedIngredients[i].amount * numOfGuests);
 		}
 		return dishPrice;
 	}
@@ -88,8 +96,25 @@ var DinnerModel = function() {
 	//function that returns all dishes of specific type (i.e. "starter", "main dish" or "dessert")
 	//you can use the filter argument to filter out the dish by name or ingredient (use for search)
 	//if you don't pass any filter all the dishes will be returned
-	this.getAllDishes = function(type, filter) {	
-		return dishes.filter(function(dish) {
+	this.getAllDishes = function(type, filter, callback, callbackError) {	
+	//url: 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search',
+	$.ajax( {
+		url: 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?instructionsRequired=true&limitLicense=false&number=10&offset=0&query=' + filter + '&type=' + type,
+		headers: {
+			'X-Mashape-Key': 'Qu9grxVNWpmshA4Kl9pTwyiJxVGUp1lKzrZjsnghQMkFkfA4LB'
+		},
+		success: function(data) {
+			//storedSearchResults = data;
+			callback(data);
+			console.log(data);
+		},
+		error: function(data) {
+			callbackError(data);
+			console.log(data);
+		}
+ 	}) 
+		
+		/*return dishes.filter(function(dish) {
 			var found = true;
 			if (filter) {
 				found = false;
@@ -106,26 +131,42 @@ var DinnerModel = function() {
 				return found;
 			else
 				return dish.type == type && found;
-		});
+		});*/
 	}
 
 	//function that returns a dish of specific ID
-	this.getDish = function(id) {
-		for (var key in dishes) {
-			if (dishes[key].id == id) {
-				return dishes[key];
-			}
+	this.getDish = function(id, callback, callbackError) {
+	$.ajax( {
+		url: 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/' + id + '/information?includeNutrition=false',
+		headers: {
+			'X-Mashape-Key': 'Qu9grxVNWpmshA4Kl9pTwyiJxVGUp1lKzrZjsnghQMkFkfA4LB'
+		},
+		success: function(data) {
+			storedDishIngredients[data.id] = data;
+			callback(data);
+			console.log(data);
+		},
+		error: function(data) {
+			callbackError(data);
+			console.log(data);
 		}
+ 	}) 
+	/*for (var key in lastSearchResults) {
+			if (lastSearchResults[key].id == id) {
+				return lastSearchResults[key];
+			}
+		}*/
 	}
 	
 	//Adds the passed dish to the menu. If the dish of that type already exists on the menu
 	//it is removed from the menu and the new one added.
 	this.addDishToMenu = function(id) {
+		/*
 		for(var i = 0; i < dinnerMenu.length; i++){
 			if(dinnerMenu[i].type == this.getDish(id).type)
 				this.removeDishFromMenu(dinnerMenu[i].id);
-		}
-		dinnerMenu.push(this.getDish(id));
+		}*/
+		dinnerMenu.push(storedDishIngredients[id]);
 		notifyObservers();
 	}
 
