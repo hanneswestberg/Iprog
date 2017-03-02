@@ -1,0 +1,28 @@
+<!-- VIEW 6 -->
+		<div id="view6" class="col-sm-12 col-xs-12" ng-controller="DinnerCtrl">
+      
+      <ng-include src="'partials/myDinner-sidebar.html'"></ng-include>
+      
+			<div id="allChosenDishesView6" class="allChosenDishesView6">
+				<!-- Generated images + name of dish + description goes here-->
+				<!-- Generated preparation instruction goes here-->
+        <div class="row">
+          <div ng-repeat="dish in getFullMenu()">
+						<div class="row">
+							<div class="col-sm-2 col-xs-6" style="padding:0px; margin:30px; width: 200px; height: 200px">
+            		<img ng-src="{{dish.image}}" alt="{{dish.title}}" style="border-style: solid 4px; margin: 0px; object-fit:cover; width:100%; height:100%"/>
+         			</div>
+          		<div class="col-sm-4 col-xs-6">
+            		<h2 style="padding:0px">{{dish.title}}</h2>
+           			<p style="margin:0px">{{dish.creditText}}</p>
+         			</div>
+          		<div class="col-sm-6 col-xs-12">
+            		<h3 style="padding:0px">Preparation</h3>
+            		<p> {{dish.instructions}} </p>
+          		</div>
+						</div>
+          </div>
+        </div>
+      </div>
+      
+		</div>

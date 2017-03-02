@@ -10,15 +10,20 @@ dinnerPlannerApp.controller('DishCtrl', function ($scope,$routeParams,Dinner) {
     if($scope.dish === undefined && $scope.isSearching === false){
       $scope.isSearching = true;
       $scope.status = "Searching...";
-      Dinner.Dish.get({id:$routeParams.dishId},function(data){
+      
+      Dinner.getDish($routeParams.dishId, function(data){
         $scope.dish = data;
         $scope.ingredients = data.extendedIngredients;
         $scope.status = "Found dish";
         $scope.isSearching = false;
-      },function(data){
+      }, function(data){
         $scope.isSearching = false;
         $scope.status = "There was an error";
       });
     }
+  }
+  
+  $scope.getDishPrice = function(id){
+    return (id === undefined) ? Dinner.getDishPrice($routeParams.dishId) : Dinner.getDishPrice(id);
   }
 });

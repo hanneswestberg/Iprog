@@ -3,20 +3,24 @@
 // dependency on any service you need. Angular will insure that the
 // service is created first time it is needed and then just reuse it
 // the next time.
-dinnerPlannerApp.factory('Dinner',function ($resource) {
+dinnerPlannerApp.factory('Dinner',function ($resource, $cookieStore) {
   
   
   	//TODO Lab 2 implement the data structure that will hold number of guest
 	// and selected dinner options for dinner menu
-	var numOfGuests = 0;
-	var dinnerMenu = [];
+	var numOfGuests = ($cookieStore.get('numOfGuests') === undefined) ? 0 : $cookieStore.get('numOfGuests');
+	var dinnerMenu = ($cookieStore.get('dinnerMenu') === undefined) ? [] : $cookieStore.get('dinnerMenu');
 	
 	// Stores the latest search results in a temporary array, so we easily can get info without doing additional API requests
-	var storedSearchResults = {};
-	var storedDishIngredients = {};
+	var sessionStoredSearchResults = {};
+	var sessionStoredDishes = {};
+	
+	// A dictionary storing the dishes we are currently searching for
+	var currentlySearchingCallbacks = {};
 
 	this.setNumberOfGuests = function(num) {
 		numOfGuests = (num < 0) ? numOfGuests : num;
+		$cookieStore.put('numOfGuests', numOfGuests);
 	}
 
 	this.getNumberOfGuests = function() {
@@ -31,9 +35,20 @@ dinnerPlannerApp.factory('Dinner',function ($resource) {
 		}
 	}
 
-	//Returns all the dishes on the menu.
+	//Returns all the dishes on the menu as objects
 	this.getFullMenu = function() {
-		return dinnerMenu;
+		// We check for duplicates
+		dinnerMenu = dinnerMenu.filter(function(item, pos){
+			return dinnerMenu.indexOf(item) == pos;
+		})
+		
+		var dinnerMenuObjects = [];
+		for(var i = 0; i < dinnerMenu.length; i++){
+			this.getDish(dinnerMenu[i], function(data){
+				dinnerMenuObjects.push(data);
+			}, function(data){});
+		}
+		return dinnerMenuObjects;
 	}
 
 	//Returns all ingredients for all the dishes on the menu.
@@ -59,91 +74,106 @@ dinnerPlannerApp.factory('Dinner',function ($resource) {
 	this.getTotalMenuPrice = function() {
 		var totalPrice = 0;
 		for(var d = 0; d < dinnerMenu.length; d++){
-			totalPrice += this.getDishPrice(dinnerMenu[d].id);
+			totalPrice += Number(this.getDishPrice(dinnerMenu[d]));
 		}
 		return totalPrice.toFixed(2);
 	}
-
-	this.getDishPrice = function(id){
+	
+	this.getDishPrice = function(dishId){
 		var dishPrice = 0;
-		var dish = storedDishIngredients[id];
-		for(var i = 0; i < dish.extendedIngredients.length; i++){
-			dishPrice += (dish.extendedIngredients[i].amount * numOfGuests);
-		}
-		return dishPrice;
+		this.getDish(dishId, function(data){
+			for(var i = 0; i < data.extendedIngredients.length; i++){
+				dishPrice += (data.extendedIngredients[i].amount * numOfGuests);
+			}
+		}, function(data){
+			dishPrice = NaN;
+		});
+			
+		return dishPrice.toFixed(2);
 	}
-
 
 	//Removes dish from menu
 	this.removeDishFromMenu = function(id) {
 		for(var i = 0; i < dinnerMenu.length; i++){
-			if(dinnerMenu[i].id == id)
+			if(dinnerMenu[i] == id)
 				dinnerMenu.splice(i, 1);
 		}
 	}
 	
+	// This function takes a dish ID and returns the dish info. Before making a request call to the API it checks if we have downloaded the info in the current session
+	this.getDish = function(dishId, cbSuccess, cbError){
+		// First we check if we already have stored info about this dish
+		if(dishId in sessionStoredDishes) {
+			cbSuccess(sessionStoredDishes[dishId]);
+		// Else we get the information from the API and store it
+		} else {
+			// If we are currently searching for the dish, we must add this to the callback
+			if(dishId in currentlySearchingCallbacks) {
+				currentlySearchingCallbacks[dishId][0].push(cbSuccess);
+				currentlySearchingCallbacks[dishId][1].push(cbError);
+			// Else we make a new search
+			} else {
+				// First index is success, second is error
+				currentlySearchingCallbacks[dishId] = [ [cbSuccess], [cbError] ]; 
+				// Here we make the call
+				this.apiGetDish.get({id:dishId}, function(data){
+					// We store the data
+					sessionStoredDishes[dishId] = data;
+					// We make our calls
+					for(var i = 0; i < currentlySearchingCallbacks[dishId][0].length; i++){
+						currentlySearchingCallbacks[dishId][0][i](data);
+					}
+					// We remove this dish in the callback array
+					currentlySearchingCallbacks.splice(dishId, 1);
+      }, function(data){
+        	// We make our calls
+					for(var i = 0; i < currentlySearchingCallbacks[dishId][1].length; i++){
+						currentlySearchingCallbacks[dishId][1][i](data);
+					}
+					// We remove this dish in the callback array
+					currentlySearchingCallbacks.splice(dishId, 1);
+      });
+			}
+		}
+	}
+	
 	this.DishSearch = $resource('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search',{},{
-  get: {
-    headers: {
-      'X-Mashape-Key': 'Qu9grxVNWpmshA4Kl9pTwyiJxVGUp1lKzrZjsnghQMkFkfA4LB'
-    }
-  }
+		get: {
+			headers: {
+				'X-Mashape-Key': 'Qu9grxVNWpmshA4Kl9pTwyiJxVGUp1lKzrZjsnghQMkFkfA4LB'
+			}
+		}
 	});
 	
-	this.Dish = $resource('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/:id/information',{},{
-  get: {
-    headers: {
-       'X-Mashape-Key': 'Qu9grxVNWpmshA4Kl9pTwyiJxVGUp1lKzrZjsnghQMkFkfA4LB'
-    }
-  }
-});
-	
-
-	//function that returns all dishes of specific type (i.e. "starter", "main dish" or "dessert")
-	//you can use the filter argument to filter out the dish by name or ingredient (use for search)
-	//if you don't pass any filter all the dishes will be returned
-	this.getAllDishes = function(type, filter, callback, callbackError) {	
-	//url: 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search',
-	$.ajax( {
-		url: 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?instructionsRequired=true&limitLicense=false&number=10&offset=0&query=' + filter + '&type=' + type,
-		headers: {
-			'X-Mashape-Key': 'Qu9grxVNWpmshA4Kl9pTwyiJxVGUp1lKzrZjsnghQMkFkfA4LB'
-		},
-		success: function(data) {
-			//storedSearchResults = data;
-			callback(data);
-			console.log(data);
-		},
-		error: function(data) {
-			callbackError(data);
-			console.log(data);
+	this.apiGetDish = $resource('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/:id/information',{},{
+		get: {
+			headers: {
+				 'X-Mashape-Key': 'Qu9grxVNWpmshA4Kl9pTwyiJxVGUp1lKzrZjsnghQMkFkfA4LB'
+			}
 		}
- 	}) 
-	}
-
-	//function that returns a dish of specific ID
-	this.getDish = function(id, callback, callbackError) {
-	$.ajax( {
-		url: 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/' + id + '/information?includeNutrition=false',
-		headers: {
-			'X-Mashape-Key': 'Qu9grxVNWpmshA4Kl9pTwyiJxVGUp1lKzrZjsnghQMkFkfA4LB'
-		},
-		success: function(data) {
-			storedDishIngredients[data.id] = data;
-			callback(data);
-			console.log(data);
-		},
-		error: function(data) {
-			callbackError(data);
-			console.log(data);
-		}
- 	}) 
-	}
+	});
 	
 	//Adds the passed dish to the menu. If the dish of that type already exists on the menu
 	//it is removed from the menu and the new one added.
 	this.addDishToMenu = function(id) {
-		dinnerMenu.push(storedDishIngredients[id]);
+		// First we find the dish we added
+		var addedDish = {};
+		this.getDish(id, function(data){
+			addedDish = data;
+		}, function(data){});
+		// We loop through our added dishes
+		for(var i = 0; i < dinnerMenu.length; i++){
+			var compDish = {};
+			this.getDish(dinnerMenu[i], function(data){
+				compDish = data;
+			}, function(data){});
+			//Then we check if the added dish type and the compare dish are the same. If that is the case then we remove the comp from the menu
+			if(compDish.dishTypes[0] === addedDish.dishTypes[0])
+				this.removeDishFromMenu(compDish.id);
+		}
+		// Then we update our menu
+		dinnerMenu.push(id);
+		$cookieStore.put('dinnerMenu', dinnerMenu);
 	}
 
 

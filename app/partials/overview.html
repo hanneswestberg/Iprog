@@ -1,0 +1,30 @@
+<!-- VIEW 5 -->		
+		<div id="view5" class="col-sm-12 col-xs-12" ng-controller="DinnerCtrl">
+			
+		<ng-include src="'partials/myDinner-sidebar.html'"></ng-include>
+			
+			<div class="row" ng-controller="DishCtrl">
+				<div id="allChosenDishes" class="col-sm-8" style="align:center">
+					<!-- Generated images and prices of the chosen dishes goes here-->
+					<div ng-repeat="dish in getFullMenu()">
+						<div class="col-sm-2" style="padding:0px; margin:30px; width: 200px; height: 200px">
+							<img ng-src="{{dish.image}}" alt="dish.title" style="border-style: solid 4px; margin: 0px; object-fit:cover; width:100%; height:100%"/>
+							<a ng-href="#!/dish/{{dish.id}}" class="btn" style="margin:0px; position:relative; bottom:30px; width:200px; border-style: solid; box-shadow: none;"><span style="white-space:pre-line; word-wrap:break-word;">{{dish.title}}</span></a>
+							<!--<p style="margin:0px; position:relative; bottom:30px; width:100%; border-style: solid; background-color: rgba(255, 255, 153, 1)"> {{dish.title}} </p>-->
+							<p style="position:relative; overflow:hidden;height:60px; color: #b21e1e; text-align: center;"> {{getDishPrice(dish.id)}} SEK</p>
+						</div>
+				</div>
+		 			</div>
+				
+				<div id="totalCost" class="col-sm-4" style="border-left: 1px solid black">
+					<!-- Generated total price of the chosen dishes goes here-->
+					<p><b>Total:</b><br style="display: block; margin: 2px 0"></p>
+					<p style="color:#b21e1e">{{getTotalMenuPrice()}} SEK</p>
+				</div>
+				
+			</div>
+			<hr style="margin-top:200px">
+			<div class="row text-center">
+				<a ng-href="#!/preparation" class="btn" type="button" style="padding:10px;"><span>Print Full Recipe</span></a>
+			</div>
+		</div>

@@ -3,13 +3,13 @@
 
 <!-- TODO in Lab 5: Display the dish information including image, Description, 
 Instructions, Ingredients and total cost. -->
-<div id="view4" class="col-sm-9 col-xs-7" ng-model="getDish()" style="height:100%">
+<div id="view4" class="col-sm-9 col-xs-7" ng-model="getDish()" ng-controller="DinnerCtrl" style="height:100%">
   <div class="row">
     <div class="col-sm-6">
       <h2 style="padding:0px">{{dish.title}}</h2>
-      <img ng-src="{{dish.image}}" style="width:50%; height:50%; margin: 0px;">
+      <img src="../images/eatstreet-loading.gif" ng-src="{{dish.image}}" style="width:50%; height:50%; margin: 0px;"/>
       <p>{{dish.creditText}}</p>
-      <a href="#!/search" class="btn btn-primary" style="padding:10px; margin:0px 0px 50px 0px;">Back to Search</a>
+      <a href="#!/search" class="btn" style="padding:10px; margin:0px 0px 50px 0px;"><span>Back to Search</span></a>
     </div>
     <div class="col-sm-6" >
       <div class="recipeBox">
@@ -26,10 +26,10 @@ Instructions, Ingredients and total cost. -->
       <hr>
       <div class="row">
         <div class="col-sm-7 col-xs-7">
-          <button id="confirmDishButton" class="btn" type="button" style="margin:0px 0px 20px 40px;"><span>Confirm Dish</span></button>
+          <button ng-controller="DinnerCtrl" class="btn" ng-click="addDishToMenu(dish.id)" type="button" style="margin:0px 0px 20px 40px;"><span>Confirm Dish</span></button>
         </div>
         <div class="col-sm-5 col-xs-5" style="padding: 0px 0px 0px 9%">
-          <p><b>SEK<span id="totalIngredientsCost"></span></b></p>
+          <p><b>SEK <span>{{getDishPrice()}}</span></b></p>
         </div>
       </div>
       </div>

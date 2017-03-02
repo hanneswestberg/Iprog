@@ -17,4 +17,20 @@ dinnerPlannerApp.controller('SearchCtrl', function ($scope,Dinner) {
       $scope.status = "There was an error";
   });
   }
+  // The data for the options
+  $scope.options = ["Main course", "Dessert", "Appetizer"];
+  // The selected option
+  $scope.selectedOption = $scope.options[0];
+  
+  /*<option selected="selected" value="main course">Main course</option>                  
+  <option value="side dish">Side dish</option>
+  <option value="dessert">Dessert</option>
+  <option value="appetizer">Appetizer</option>
+  <option value="salad">Salad</option>
+  <option value="bread">Bread</option>
+  <option value="breakfast">Breakfast</option>
+  <option value="soup">Soup</option>
+  <option value="beverage">Beverage</option>
+  <option value="sauce">Sauce</option>
+  <option value="drink">Drink</option>*/
 });

@@ -13,7 +13,7 @@ this with Total price of the menu -->
     <h2 id="myDinner" class="col-sm-12">My dinner:</h2>
     <div class="row">
       <div class="col-sm-12 col-xs-12" style="left:15px">
-        People: <input type="number" ng-model="numberOfGuests" ng-change="setNumberOfGuest(numberOfGuests)" style="width: 30%; left:15px"/>
+        People: <input type="number" min="0" ng-model="numberOfGuests" ng-change="setNumberOfGuest(numberOfGuests)" style="width: 30%; left:15px"/>
       </div>
     </div>
   </div>
@@ -28,20 +28,35 @@ this with Total price of the menu -->
   </div>
 
   <div id="dinnerMenuList" class="dinnerMenuList">
+    <div class="row" ng-repeat="dish in getFullMenu()">
+      <div class="col-sm-6">
+        <p>{{dish.title}}</p>
+      </div>
+      <div class="col-sm-2">
+        <p ng-controller="DishCtrl">{{getDishPrice(dish.id)}}</p>
+      </div>
+      <div class="col-sm-2">
+        <a ng-href="#!/dish/{{dish.id}}" class="btn" style="margin:auto; position:relative; top:3px;"><span class="glyphicon glyphicon-arrow-left" style="color:#009933"></span></a>
+      </div>
+      <div class="col-sm-2">
+        <button class="btn" ng-controller="DinnerCtrl" ng-click="removeDishFromMenu(dish.id)" style="margin:auto; position:relative; top:3px;"><span class="glyphicon glyphicon-remove" style="color:#ff0000"></span></button>
+      </div>
+    </div>
+    
     <div class="row">
       <div class="col-sm-6">
         <p id="selectedMenus">Pending</p>
       </div>
       <div class="col-sm-6">
-        <p id="cost">0.00</p>
+        <p ng-controller="DishCtrl">{{getDishPrice()}}</p>
       </div>
     </div>
   </div>
   <hr>
-  <div class="row">
-    <p style="text-align:center; margin:20px"><b>Cost:</b> <span id="totalCost"></span></p>
+  <div class="row" ng-controller="DinnerCtrl">
+    <p style="text-align:center; margin:20px"><b>Cost:</b> {{getTotalMenuPrice()}}</p>
   </div>
-  <div class="row">
-    <a id="confirmDinnerButton" href="#!/overview" class="btn btn-primary" style="width:100%; padding:10px">Confirm Dinner</a>
+  <div class="row" ng-controller="DinnerCtrl">
+    <a id="confirmDinnerButton" ng-href="{{getTotalMenuPrice() == 0 ? '#!/search' : '#!/overview'}}" class="btn" style="width:100%; padding:10px"><span>Confirm Dinner</span></a>
   </div>
 </div>
